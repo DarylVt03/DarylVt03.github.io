@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso</title>
+
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20vh;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 18px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #mensaje {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Introduce la contraseña</h1>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        autocomplete="off"
+    >
+
+    <br>
+
+    <button onclick="comprobarPassword()">Entrar</button>
+
+    <p id="mensaje"></p>
+
+    <!-- Audio -->
+    <audio id="audio">
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <script>
+
+        function comprobarPassword() {
+
+            const password = document.getElementById("password").value;
+            const mensaje = document.getElementById("mensaje");
+            const audio = document.getElementById("audio");
+
+            if (password === "08032003") {
+
+                mensaje.textContent = "Contraseña correcta";
+
+                // Reproducir el audio
+                audio.currentTime = 0;
+                audio.play();
+
+            } else {
+
+                mensaje.textContent = "Contraseña incorrecta";
+
+            }
+        }
+
+    </script>
+
+</body>
+</html>
