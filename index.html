@@ -26,9 +26,37 @@
             cursor: pointer;
         }
 
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #indicacion {
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
         #mensaje {
             margin-top: 20px;
             font-size: 18px;
+        }
+
+        #pista {
+            display: none;
+            margin: 30px auto;
+            max-width: 600px;
+            padding: 20px;
+            border: 1px solid #555;
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        #contador {
+            color: #888;
+            font-size: 14px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -42,42 +70,167 @@
         id="password"
         placeholder="Contraseña"
         autocomplete="off"
+        inputmode="numeric"
+        maxlength="8"
     >
+
+    <p id="indicacion">
+        La contraseña tiene 8 dígitos
+    </p>
 
     <br>
 
-    <button onclick="comprobarPassword()">Entrar</button>
+    <button id="boton" onclick="comprobarPassword()">
+        Entrar
+    </button>
 
     <p id="mensaje"></p>
 
+    <p id="contador"></p>
+
+    <div id="pista">
+        Revisa una de los objetos que se te proporcionaron al principio,
+        el cual no has usado hasta el momento, uno de los datos que aparecen
+        debes ingresarlo aquí.
+    </div>
+
     <!-- Audio -->
     <audio id="audio">
-        <source src="audio.mp3" type="audio/mpeg">
+        <source src="audioPista.mp3" type="audio/mpeg">
     </audio>
 
 
     <script>
 
+        // ==========================================
+        // CONFIGURACIÓN
+        // ==========================================
+
+        const CONTRASENA = "12101935";
+
+        let intentos = 0;
+        let bloqueado = false;
+
+
+        // ==========================================
+        // COMPROBAR CONTRASEÑA
+        // ==========================================
+
         function comprobarPassword() {
+
+            // Evitar intentos durante la espera
+            if (bloqueado) {
+                return;
+            }
 
             const password = document.getElementById("password").value;
             const mensaje = document.getElementById("mensaje");
             const audio = document.getElementById("audio");
 
-            if (password === "12101935") {
+            // Contraseña correcta
+            if (password === CONTRASENA) {
 
                 mensaje.textContent = "Contraseña correcta";
+                mensaje.style.color = "#6f6";
 
-                // Reproducir el audio
+                // Reiniciar contador de intentos
+                intentos = 0;
+
+                // Reproducir audio
                 audio.currentTime = 0;
                 audio.play();
 
-            } else {
+                return;
+            }
 
-                mensaje.textContent = "Contraseña incorrecta";
+
+            // ==========================================
+            // CONTRASEÑA INCORRECTA
+            // ==========================================
+
+            intentos++;
+
+            mensaje.textContent =
+                "Contraseña incorrecta";
+
+            mensaje.style.color = "#f66";
+
+            // Vaciar el campo
+            document.getElementById("password").value = "";
+
+
+            // Mostrar pista después del quinto error
+            if (intentos >= 5) {
+
+                document.getElementById("pista").style.display = "block";
 
             }
+
+
+            // Iniciar espera de 5 segundos
+            iniciarEspera();
         }
+
+
+        // ==========================================
+        // ESPERA ENTRE INTENTOS
+        // ==========================================
+
+        function iniciarEspera() {
+
+            bloqueado = true;
+
+            const boton = document.getElementById("boton");
+            const contador = document.getElementById("contador");
+
+            boton.disabled = true;
+
+            let segundos = 5;
+
+            contador.textContent =
+                "Espera " + segundos + " segundos para volver a intentarlo.";
+
+            const intervalo = setInterval(function() {
+
+                segundos--;
+
+                if (segundos > 0) {
+
+                    contador.textContent =
+                        "Espera " + segundos +
+                        " segundos para volver a intentarlo.";
+
+                } else {
+
+                    clearInterval(intervalo);
+
+                    bloqueado = false;
+
+                    boton.disabled = false;
+
+                    contador.textContent =
+                        "Ya puedes volver a intentarlo.";
+
+                }
+
+            }, 1000);
+        }
+
+
+        // ==========================================
+        // PERMITIR ENTER
+        // ==========================================
+
+        document.getElementById("password").addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+                    comprobarPassword();
+                }
+
+            }
+        );
 
     </script>
 
