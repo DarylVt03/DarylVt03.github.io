@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Acceso</title>
 
     <style>
+
+        /* ==========================================
+           ESTILO GENERAL
+           ========================================== */
+
         body {
             background-color: #111;
             color: white;
@@ -14,11 +20,21 @@
             margin-top: 20vh;
         }
 
+
+        /* ==========================================
+           CAMPO DE CONTRASEÑA
+           ========================================== */
+
         input {
             padding: 12px;
             font-size: 18px;
             margin: 10px;
         }
+
+
+        /* ==========================================
+           BOTONES
+           ========================================== */
 
         button {
             padding: 12px 25px;
@@ -31,39 +47,83 @@
             opacity: 0.5;
         }
 
+
+        /* ==========================================
+           INDICACIÓN DE LOS 8 DÍGITOS
+           ========================================== */
+
         #indicacion {
             color: #aaa;
             font-size: 14px;
             margin-top: 5px;
         }
 
+
+        /* ==========================================
+           MENSAJES
+           ========================================== */
+
         #mensaje {
             margin-top: 20px;
             font-size: 18px;
         }
 
-        #pista {
-            display: none;
-            margin: 30px auto;
-            max-width: 600px;
-            padding: 20px;
-            border: 1px solid #555;
-            color: #ccc;
-            font-size: 16px;
-            line-height: 1.5;
-        }
+
+        /* ==========================================
+           CUENTA ATRÁS ENTRE INTENTOS
+           ========================================== */
 
         #contador {
             color: #888;
             font-size: 14px;
             margin-top: 15px;
         }
+
+
+        /* ==========================================
+           PISTA ESCRITA
+           ========================================== */
+
+        #pista {
+            display: none;
+
+            margin: 30px auto;
+            max-width: 600px;
+            padding: 20px;
+
+            border: 1px solid #555;
+
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+
+        /* ==========================================
+           BOTÓN DE REPETIR AUDIO
+           ========================================== */
+
+        #botonReproducir {
+            display: none;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 
+
 <body>
 
+    <!-- ==========================================
+         TÍTULO
+         ========================================== -->
+
     <h1>Introduce la contraseña</h1>
+
+
+    <!-- ==========================================
+         CONTRASEÑA
+         ========================================== -->
 
     <input
         type="password"
@@ -74,163 +134,338 @@
         maxlength="8"
     >
 
+
+    <!-- Indicación de que son 8 dígitos -->
+
     <p id="indicacion">
         La contraseña tiene 8 dígitos
     </p>
 
+
     <br>
 
-    <button id="boton" onclick="comprobarPassword()">
+
+    <!-- ==========================================
+         BOTÓN ENTRAR
+         ========================================== -->
+
+    <button
+        id="boton"
+        onclick="comprobarPassword()"
+    >
         Entrar
     </button>
 
+
+    <!-- ==========================================
+         MENSAJE
+         ========================================== -->
+
     <p id="mensaje"></p>
+
+
+    <!-- ==========================================
+         CUENTA ATRÁS
+         ========================================== -->
 
     <p id="contador"></p>
 
+
+    <!-- ==========================================
+         PISTA ESCRITA
+         ========================================== -->
+
     <div id="pista">
-        Revisa una de los objetos que se te proporcionaron al principio,
-        el cual no has usado hasta el momento, uno de los datos que aparecen
-        debes ingresarlo aquí.
+
+        Revisa una de los objetos que se te proporcionaron
+        al principio, el cual no has usado hasta el momento,
+        uno de los datos que aparecen debes cambiarlo de formato
+
     </div>
 
-    <!-- Audio -->
+
+    <!-- ==========================================
+         BOTÓN PARA REPETIR LA PISTA
+         ========================================== -->
+
+    <button
+        id="botonReproducir"
+        onclick="reproducirPista()"
+        disabled
+    >
+        🔊 Reproducir pista de nuevo
+    </button>
+
+
+    <!-- ==========================================
+         AUDIO
+         ========================================== -->
+
     <audio id="audioPista">
-        <source src="audioPista.mp3" type="audio/mpeg">
+
+        <source
+            src="audioPista.mp3"
+            type="audio/mpeg"
+        >
+
+        Tu navegador no soporta audio.
+
     </audio>
 
 
+    <!-- ==========================================
+         JAVASCRIPT
+         ========================================== -->
+
     <script>
 
-        // ==========================================
-        // CONFIGURACIÓN
-        // ==========================================
+
+        /* ==========================================
+           CONFIGURACIÓN
+           ========================================== */
 
         const CONTRASENA = "12101935";
 
         let intentos = 0;
+
         let bloqueado = false;
 
 
-        // ==========================================
-        // COMPROBAR CONTRASEÑA
-        // ==========================================
+        /* ==========================================
+           COMPROBAR CONTRASEÑA
+           ========================================== */
 
         function comprobarPassword() {
 
-            // Evitar intentos durante la espera
+            // Si está bloqueado, no hacemos nada
             if (bloqueado) {
                 return;
             }
 
-            const password = document.getElementById("password").value;
-            const mensaje = document.getElementById("mensaje");
-            const audio = document.getElementById("audioPista");
 
-            // Contraseña correcta
+            // Obtener elementos
+            const password =
+                document.getElementById("password").value;
+
+            const mensaje =
+                document.getElementById("mensaje");
+
+            const audioPista =
+                document.getElementById("audioPista");
+
+            const botonReproducir =
+                document.getElementById("botonReproducir");
+
+
+            /* ======================================
+               CONTRASEÑA CORRECTA
+               ====================================== */
+
             if (password === CONTRASENA) {
 
-                mensaje.textContent = "Contraseña correcta";
+                mensaje.textContent =
+                    "Contraseña correcta";
+
                 mensaje.style.color = "#6f6";
 
-                // Reiniciar contador de intentos
+
+                // Reiniciar contador
                 intentos = 0;
 
-                // Reproducir audio
+
+                // Mostrar botón de repetir
+                botonReproducir.style.display =
+                    "inline-block";
+
+
+                // Bloquear mientras suena
+                botonReproducir.disabled = true;
+
+
+                // Reiniciar audio
                 audioPista.currentTime = 0;
+
+
+                // Reproducir audio
                 audioPista.play();
+
 
                 return;
             }
 
 
-            // ==========================================
-            // CONTRASEÑA INCORRECTA
-            // ==========================================
+            /* ======================================
+               CONTRASEÑA INCORRECTA
+               ====================================== */
 
             intentos++;
+
 
             mensaje.textContent =
                 "Contraseña incorrecta";
 
             mensaje.style.color = "#f66";
 
-            // Vaciar el campo
+
+            // Limpiar contraseña
             document.getElementById("password").value = "";
 
 
-            // Mostrar pista después del quinto error
+            /* ======================================
+               MOSTRAR PISTA TRAS 5 INTENTOS
+               ====================================== */
+
             if (intentos >= 3) {
 
-                document.getElementById("pista").style.display = "block";
+                document.getElementById("pista").style.display =
+                    "block";
 
             }
 
 
-            // Iniciar espera de 5 segundos
+            /* ======================================
+               ESPERAR 5 SEGUNDOS
+               ====================================== */
+
             iniciarEspera();
+
         }
 
 
-        // ==========================================
-        // ESPERA ENTRE INTENTOS
-        // ==========================================
+        /* ==========================================
+           ESPERA ENTRE INTENTOS
+           ========================================== */
 
         function iniciarEspera() {
 
             bloqueado = true;
 
-            const boton = document.getElementById("boton");
-            const contador = document.getElementById("contador");
 
+            const boton =
+                document.getElementById("boton");
+
+            const contador =
+                document.getElementById("contador");
+
+
+            // Desactivar botón
             boton.disabled = true;
+
 
             let segundos = 5;
 
+
             contador.textContent =
-                "Espera " + segundos + " segundos para volver a intentarlo.";
+                "Espera " +
+                segundos +
+                " segundos para volver a intentarlo.";
 
-            const intervalo = setInterval(function() {
 
-                segundos--;
+            const intervalo =
+                setInterval(function() {
 
-                if (segundos > 0) {
+                    segundos--;
 
-                    contador.textContent =
-                        "Espera " + segundos +
-                        " segundos para volver a intentarlo.";
 
-                } else {
+                    if (segundos > 0) {
 
-                    clearInterval(intervalo);
+                        contador.textContent =
+                            "Espera " +
+                            segundos +
+                            " segundos para volver a intentarlo.";
 
-                    bloqueado = false;
+                    }
 
-                    boton.disabled = false;
+                    else {
 
-                    contador.textContent =
-                        "Ya puedes volver a intentarlo.";
+                        clearInterval(intervalo);
 
-                }
 
-            }, 1000);
+                        // Volver a permitir intentos
+                        bloqueado = false;
+
+
+                        boton.disabled = false;
+
+
+                        contador.textContent =
+                            "Ya puedes volver a intentarlo.";
+
+                    }
+
+                }, 1000);
+
         }
 
 
-        // ==========================================
-        // PERMITIR ENTER
-        // ==========================================
+        /* ==========================================
+           REPRODUCIR PISTA DE NUEVO
+           ========================================== */
 
-        document.getElementById("password").addEventListener(
-            "keydown",
-            function(event) {
+        function reproducirPista() {
 
-                if (event.key === "Enter") {
-                    comprobarPassword();
+            const audioPista =
+                document.getElementById("audioPista");
+
+            const botonReproducir =
+                document.getElementById("botonReproducir");
+
+
+            // Bloquear botón mientras suena
+            botonReproducir.disabled = true;
+
+
+            // Volver al principio
+            audioPista.currentTime = 0;
+
+
+            // Reproducir
+            audioPista.play();
+
+        }
+
+
+        /* ==========================================
+           CUANDO TERMINA EL AUDIO
+           ========================================== */
+
+        document
+            .getElementById("audioPista")
+            .addEventListener(
+                "ended",
+                function() {
+
+                    const botonReproducir =
+                        document.getElementById(
+                            "botonReproducir"
+                        );
+
+
+                    // Volver a permitir reproducir
+                    botonReproducir.disabled = false;
+
                 }
+            );
 
-            }
-        );
+
+        /* ==========================================
+           PERMITIR ENTER PARA ENVIAR
+           ========================================== */
+
+        document
+            .getElementById("password")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (event.key === "Enter") {
+
+                        comprobarPassword();
+
+                    }
+
+                }
+            );
 
     </script>
 
