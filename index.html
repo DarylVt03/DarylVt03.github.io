@@ -125,7 +125,7 @@
 
             const password = document.getElementById("password").value;
             const mensaje = document.getElementById("mensaje");
-            const audio = document.getElementById("audio");
+            const audio = document.getElementById("audioPista");
 
             // Contraseña correcta
             if (password === CONTRASENA) {
@@ -137,8 +137,8 @@
                 intentos = 0;
 
                 // Reproducir audio
-                audio.currentTime = 0;
-                audio.play();
+                audioPista.currentTime = 0;
+                audioPista.play();
 
                 return;
             }
